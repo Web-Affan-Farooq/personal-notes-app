@@ -1,103 +1,162 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+// _____ Hooks ...
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+
+// _____ Constants ...
+// import { notes } from "@/constants";
+
+// _____ Library ...
+import { z } from "zod";
+import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+// _____ Actions ...
+import AddNoteAction from "@/actions/AddNoteAction";
+
+// _____ Components ...
+import { Plus } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import NoteCard from "./Card";
+import { Input } from "@/components/ui/input";
+import { useNotes } from "@/store/notes";
+
+// _____ zod schema for validating form ...
+const NoteFormSchema = z.object({
+  title: z
+    .string("Invalid title")
+    .min(5, "Minimum 5 characters required")
+    .max(70, "Maximum 70 characters allowed"),
+  description: z
+    .string("Invalid description")
+    .min(70, "Minimum 70 characters required"),
+});
+
+export default function HomePage() {
+  // ______ Getting notes from zustand state ...
+  const { notes, addNote } = useNotes();
+
+  // _____ React hook form ...
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    resolver: zodResolver(NoteFormSchema),
+  });
+
+  const [disabled, setDisabled] = useState(false);
+
+  const SubmitNote = async (formData: z.infer<typeof NoteFormSchema>) => {
+    // _____ Make sure to disable button before creating request ...
+    setDisabled(true);
+    try {
+      const { message, success, note } = await AddNoteAction(formData);
+      if (!success) {
+        // _____ Show error if any
+        toast.error(message);
+      } else if (note) {
+        // ____ Add notes to local state ...
+        toast.success(message);
+        addNote(note);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("An error occured");
+    }
+    setDisabled(false);
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold my-12 text-white">Your Notes</h1>
+      <AlertDialog>
+        <AlertDialogTrigger className="absolute right-10 top-17 bg-white text-black font-bold rounded-md flex flex-row flex-nowrap justify-center items-center gap-[10px] px-[20px] py-[5px]">
+          <Plus size={20} />
+          <span>Add</span>
+        </AlertDialogTrigger>
+        <AlertDialogContent className="bg-black/1 backdrop-blur-md border-none">
+          <form
+            onSubmit={handleSubmit(SubmitNote)}
+            className="p-8 rounded-lg shadow-xl space-y-5"
+          >
+            <AlertDialogHeader>
+              <AlertDialogTitle>Add a new note</AlertDialogTitle>
+              <AlertDialogDescription className="hidden">
+                Add new note
+              </AlertDialogDescription>
+            </AlertDialogHeader>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            <div>
+              <label htmlFor="title" className="text-sm text-white">
+                Add Title
+              </label>
+              <Input
+                id="title"
+                type="text"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Note Title"
+                required
+                {...register("title")}
+              />
+              {errors.title && (
+                <p className="text-sm text-red-500">{errors.title.message}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="content" className="text-sm text-white">
+                Add Content
+              </label>
+              <textarea
+                id="content"
+                className="mt-1 h-[150px] block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Write your note here..."
+                required
+                {...register("description")}
+              />
+              {errors.description && (
+                <p className="text-sm text-red-500">
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel className="cursor-pointer transition-all duration-200 ease-in-out text-sm bg-indigo-400/20 border-none px-[20px] rounded-md py-[5px] text-red-600 hover:text-white">
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                type="submit"
+                disabled={disabled}
+                className={`cursor-pointer transition-all duration-200 ease-in-out text-sm bg-indigo-400/20 border-none px-[20px] rounded-md py-[5px] text-indigo-600 hover:text-white ${
+                  disabled ? "cursor-not-allowed" : "cursor-pointer"
+                }`}
+              >
+                {disabled ? "Wait ..." : "Add"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </form>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Notes Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {notes.map((note) => (
+          <NoteCard key={note.id} note={note} />
+        ))}
+      </div>
     </div>
   );
 }
