@@ -6,7 +6,7 @@ import { useNotes } from "@/store/notes";
 
 // _____ Types and Actions  ...
 import { Note } from "@/db/schema";
-// import DeleteNotesAction from "@/actions/DeleteNoteAction";
+import DeleteNotesAction from "@/actions/DeleteNoteAction";
 import EditNotesAction from "@/actions/EditNotesAction";
 
 // _____ Library ...
@@ -46,7 +46,7 @@ const EditNoteSchema = z.object({
 });
 
 export default function NoteCard({ note }: { note: Note }) {
-  const { editNote } = useNotes();
+  const { editNote, deleteNote } = useNotes();
 
   const [disabled, setDisabled] = useState(false);
 
@@ -107,7 +107,17 @@ export default function NoteCard({ note }: { note: Note }) {
             <AlertDialogTrigger className="cursor-pointer transition-all duration-200 ease-in-out text-sm bg-indigo-400/20 border-none px-[20px] rounded-md py-[5px] text-indigo-600 hover:text-white">
               <span>Edit</span>
             </AlertDialogTrigger>
-            <button className="cursor-pointer transition-all duration-200 ease-in-out text-sm bg-indigo-400/20 border-none px-[20px] rounded-md py-[5px] text-red-600 hover:text-white">
+            <button
+              onClick={async () => {
+                const { message, success } = await DeleteNotesAction(note.id);
+                if (!success) {
+                  toast.error(message);
+                }
+                deleteNote(note.id);
+                toast.success(message);
+              }}
+              className="cursor-pointer transition-all duration-200 ease-in-out text-sm bg-indigo-400/20 border-none px-[20px] rounded-md py-[5px] text-red-600 hover:text-white"
+            >
               Delete
             </button>
           </div>
