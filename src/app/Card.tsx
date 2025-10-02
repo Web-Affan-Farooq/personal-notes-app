@@ -29,6 +29,8 @@ import {
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
 // import { Plus } from "lucide-react";
 
 const EditNoteSchema = z.object({
@@ -52,13 +54,16 @@ export default function NoteCard({ note }: { note: Note }) {
   const {
     register,
     handleSubmit,
-    getValues,
+    reset,
     formState: { errors },
   } = useForm({
     mode: "onChange",
     resolver: zodResolver(EditNoteSchema),
     defaultValues: {
       id: note.id,
+      title: note.title,
+      description: note.description,
+      date: note.date,
     },
   });
   const SubmitNote = async (formData: z.infer<typeof EditNoteSchema>) => {
@@ -73,6 +78,7 @@ export default function NoteCard({ note }: { note: Note }) {
         // ____ update note in local state ...
         toast.success(message);
         editNote(note);
+        reset();
       }
     } catch (err) {
       console.log(err);
@@ -82,7 +88,7 @@ export default function NoteCard({ note }: { note: Note }) {
   };
 
   return (
-    <div className="bg-white/10 border border-gray-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
+    <div className="bg-blue-600/10 backdrop-blur-md text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
       <Link href={`/notes/${note.id}`} className="block">
         <h2 className="text-xl font-bold mb-2 truncate">{note.title}</h2>
         <Separator />
@@ -124,7 +130,6 @@ export default function NoteCard({ note }: { note: Note }) {
                 <Input
                   id="title"
                   type="text"
-                  value={getValues().title}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="Note Title"
                   required
@@ -135,13 +140,17 @@ export default function NoteCard({ note }: { note: Note }) {
                 )}
               </div>
               <div>
-                <label htmlFor="content" className="text-sm text-white">
-                  Add Content
+                <label
+                  htmlFor="content"
+                  className="text-sm text-white"
+                  id="description"
+                >
+                  Edit description
                 </label>
-                <textarea
-                  id="content"
-                  className="mt-1 h-[150px] block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Write your note here..."
+                <Textarea
+                  id="description"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 h-[150px] relative placeholder:absolute top-0 left-0"
+                  placeholder="Edit description"
                   required
                   {...register("description")}
                 />
@@ -163,7 +172,7 @@ export default function NoteCard({ note }: { note: Note }) {
                     disabled ? "cursor-not-allowed" : "cursor-pointer"
                   }`}
                 >
-                  {disabled ? "Wait ..." : "Add"}
+                  {disabled ? "Wait ..." : "Commit Changes"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </form>

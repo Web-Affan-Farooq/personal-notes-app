@@ -34,10 +34,7 @@ import { useNotes } from "@/store/notes";
 
 // _____ zod schema for validating form ...
 const NoteFormSchema = z.object({
-  title: z
-    .string("Invalid title")
-    .min(5, "Minimum 5 characters required")
-    .max(70, "Maximum 70 characters allowed"),
+  title: z.string("Invalid title").min(5, "Minimum 5 characters required"),
   description: z
     .string("Invalid description")
     .min(70, "Minimum 70 characters required"),
@@ -51,6 +48,7 @@ export default function HomePage() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -71,6 +69,7 @@ export default function HomePage() {
         // ____ Add notes to local state ...
         toast.success(message);
         addNote(note);
+        reset();
       }
     } catch (err) {
       console.log(err);
@@ -99,6 +98,7 @@ export default function HomePage() {
               </AlertDialogDescription>
             </AlertDialogHeader>
 
+            {/* _____ Input for title ... */}
             <div>
               <label htmlFor="title" className="text-sm text-white">
                 Add Title
@@ -115,6 +115,8 @@ export default function HomePage() {
                 <p className="text-sm text-red-500">{errors.title.message}</p>
               )}
             </div>
+
+            {/* _____ Input for description ... */}
             <div>
               <label htmlFor="content" className="text-sm text-white">
                 Add Content
@@ -151,7 +153,7 @@ export default function HomePage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Notes Grid */}
+      {/* _____ Notes list ... */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {notes.map((note) => (
           <NoteCard key={note.id} note={note} />
