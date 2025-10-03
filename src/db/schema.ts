@@ -8,4 +8,11 @@ export const note = pgTable("notes",{
 	date:timestamp("date").defaultNow().notNull()
 })
 
+export const topic = pgTable("topics",{
+	id:uuid("id").primaryKey().defaultRandom().notNull(),
+	title:text("title").notNull(),
+	description:text("description").notNull(),
+	date:timestamp("date").defaultNow().notNull()
+})
+
 export type Note = InferSelectModel<typeof note>

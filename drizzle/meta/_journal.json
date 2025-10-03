@@ -8,6 +8,13 @@
       "when": 1759340813712,
       "tag": "0000_gray_meteorite",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1759493373439,
+      "tag": "0001_bored_steel_serpent",
+      "breakpoints": true
     }
   ]
 }
