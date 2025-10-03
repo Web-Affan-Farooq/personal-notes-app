@@ -96,7 +96,7 @@ export default function NoteCard({ note }: { note: Note }) {
           {note.description}
         </p>
         <span className="text-sm text-indigo-500 font-medium">
-          {note.date.toLocaleString()}
+          {new Date().toLocaleDateString()}
         </span>
       </Link>
 

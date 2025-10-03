@@ -78,6 +78,7 @@ export default function HomePage() {
   return (
     <div className="container mx-auto p-4 overflow-y-auto">
       <h1 className="text-3xl font-bold my-12 text-white">Your Notes</h1>
+      <span className="text-sm">{notes.length} notes found</span>
       <AlertDialog>
         <AlertDialogTrigger className="absolute right-10 top-17 bg-white text-black font-bold rounded-md flex flex-row flex-nowrap justify-center items-center gap-[10px] px-[20px] py-[5px]">
           <Plus size={20} />
