@@ -39,7 +39,7 @@ const NoteFormSchema = z.object({
 
 export default function HomePage() {
   // ______ Getting notes from zustand state ...
-  const { notes, addNote } = useNotes();
+  const { notes, setNotes } = useNotes();
 
   // _____ React hook form ...
   const {
@@ -65,7 +65,17 @@ export default function HomePage() {
       } else if (note) {
         // ____ Add notes to local state ...
         toast.success(message);
-        addNote(note);
+        // ____ Sort the notes...
+        const updatedArray = notes.sort((a, b) => {
+          /* eslint-disable-next-line     @typescript-eslint/no-explicit-any */
+          const dateA = new Date(a.date as any).getTime();
+
+          /* eslint-disable-next-line     @typescript-eslint/no-explicit-any */
+          const dateB = new Date(b.date as any).getTime();
+          return dateB - dateA;
+        });
+        updatedArray.unshift(note);
+        setNotes(updatedArray);
         reset();
       }
     } catch (err) {

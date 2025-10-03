@@ -60,7 +60,7 @@ const DynamicCasePage = () => {
     ),
     a: (props) => (
       <a
-        className="text-blue-600 hover:text-blue-800 underline"
+        className="text-blue-500 font-bold hover:text-blue-800"
         target="_blank"
         rel="noopener noreferrer"
         {...props}
