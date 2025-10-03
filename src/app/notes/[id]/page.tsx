@@ -52,7 +52,7 @@ const DynamicCasePage = () => {
     ),
     p: (props) => (
       <p
-        className="text-gray-400 text-sm font-firacode leading-relaxed mb-4"
+        className="text-gray-400 flex flex-row flex-nowrap gap-2 text-sm font-firacode leading-relaxed mb-4"
         {...props}
       />
     ),
