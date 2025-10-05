@@ -15,6 +15,13 @@
       "when": 1759493373439,
       "tag": "0001_bored_steel_serpent",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759674875076,
+      "tag": "0002_lovely_thing",
+      "breakpoints": true
     }
   ]
 }

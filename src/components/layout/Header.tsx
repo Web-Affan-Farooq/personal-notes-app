@@ -2,10 +2,11 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { NotepadText } from "lucide-react";
+import { NotepadText, Tag } from "lucide-react";
 
 const menuItems = [
   { href: "/notes", label: "Notes", icon: <NotepadText className="size-5" /> },
+  { href: "/topics", label: "Topics", icon: <Tag className="size-5" /> },
 ];
 
 const UserProfileHeader = () => {

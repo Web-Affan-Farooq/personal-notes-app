@@ -1,0 +1,1 @@
+ALTER TABLE "topics" RENAME COLUMN "description" TO "markdown_roadmap";

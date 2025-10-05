@@ -18,3 +18,5 @@ export const notes = [
     date: "2025-09-29",
   },
 ];
+
+export const token = "notes-user-token"

@@ -11,8 +11,9 @@ export const note = pgTable("notes",{
 export const topic = pgTable("topics",{
 	id:uuid("id").primaryKey().defaultRandom().notNull(),
 	title:text("title").notNull(),
-	description:text("description").notNull(),
+	markdown_roadmap:text("markdown_roadmap").notNull(),
 	date:timestamp("date").defaultNow().notNull()
-})
+});
 
 export type Note = InferSelectModel<typeof note>
+export type Topic = InferSelectModel<typeof topic>
