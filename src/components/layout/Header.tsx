@@ -3,6 +3,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { NotepadText, Tag } from "lucide-react";
+import LogoutAction from "@/actions/LogoutAction";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const menuItems = [
   { href: "/notes", label: "Notes", icon: <NotepadText className="size-5" /> },
@@ -12,6 +15,17 @@ const menuItems = [
 const UserProfileHeader = () => {
   /* _____ State for toogling sidebar... */
   const [navOpen, setNavOpen] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const { success, message } = await LogoutAction();
+    if (!success) {
+      toast.error(message);
+      return;
+    }
+    toast.success(message);
+    router.push("/login");
+  };
 
   return (
     <div className="relative flex h-screen">
@@ -40,6 +54,7 @@ const UserProfileHeader = () => {
           <button
             className="w-full text-left hover:text-white transition-all duration-150 ease-in-out cursor-pointer hover:bg-[var(--faun-light)] py-2 px-3 rounded-md"
             aria-label="Logout"
+            onClick={handleLogout}
           >
             Logout &nbsp; <i className="fa-solid fa-right-from-bracket"></i>
           </button>
